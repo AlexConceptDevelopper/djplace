@@ -1,0 +1,29 @@
+# Maven / Java
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+node_modules/
+dist/
+.vite/
+
+# Local Dev Properties (TRÈS IMPORTANT pour ne pas le pousser)
+src/main/resources/application-dev.properties
+src/main/resources/application.properties
+
+# IDEs & OS
+.sts4-cache
+.springBeans
+.settings/
+.classpath
+.project
+.factorypath
+.apt_generated
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+Thumbs.db
+Desktop.ini
