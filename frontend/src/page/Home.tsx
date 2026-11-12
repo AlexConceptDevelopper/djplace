@@ -1,5 +1,8 @@
+// src/pages/Home.tsx
 import { Helmet } from "react-helmet-async";
 import type { ArticleResponseDto } from "../type";
+import Navbar from "../component/Navbar";
+import Footer from "../component/Footer";
 
 // Données de démo
 const MOCK_ARTICLES: ArticleResponseDto[] = [
@@ -83,41 +86,9 @@ export default function Home() {
 
       {/* Conteneur principal avec fond fixe optimisé */}
       <div className="min-h-screen bg-slate-800 bg-[url('/images/abstract-nightlife-background.jpg')] bg-cover bg-center bg-fixed bg-no-repeat bg-blend-overlay text-slate-100 flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950 relative">
-        {/* ================= NAVBAR ================= */}
-        {/* ================= NAVBAR ================= */}
-        <header className="border-b border-slate-800/60 bg-slate-950/85 backdrop-blur-md sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            {/* Logo Intégré & Centré */}
-            <div className="flex items-center cursor-pointer h-full py-2">
-              <img
-                src="/djplace-logo.jpg"
-                alt="DJPLACE.FR"
-                className="h-full w-auto object-contain -ml-3 sm:-ml-5 hover:opacity-95 transition-opacity"
-              />
-            </div>
-
-            <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
-              <span className="hover:text-amber-400 transition-colors cursor-pointer">
-                Tutoriels
-              </span>
-              <span className="hover:text-amber-400 transition-colors cursor-pointer">
-                Matériel
-              </span>
-              <span className="hover:text-amber-400 transition-colors cursor-pointer">
-                Warm-up
-              </span>
-              <span className="hover:text-amber-400 transition-colors cursor-pointer">
-                Cours Gratuits
-              </span>
-            </nav>
-
-            <div>
-              <button className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition-all shadow-lg shadow-amber-500/10 cursor-pointer active:scale-95">
-                Espace Membre
-              </button>
-            </div>
-          </div>
-        </header>
+        
+        {/* Navbar externalisée */}
+        <Navbar />
 
         {/* ================= CONTENU PRINCIPAL ================= */}
         <main className="grow relative z-10">
@@ -267,25 +238,8 @@ export default function Home() {
           </div>
         </main>
 
-        {/* ================= FOOTER ================= */}
-        <footer className="border-t border-slate-900 bg-slate-950/95 backdrop-blur-md text-slate-500 text-xs py-8 relative z-10 shadow-2xl">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>
-              © {new Date().getFullYear()} djplace.fr — Tous droits réservés.
-            </p>
-            <div className="flex space-x-6 text-slate-400 font-medium">
-              <span className="hover:text-amber-400 transition-colors cursor-pointer">
-                Accueil
-              </span>
-              <span className="hover:text-amber-400 transition-colors cursor-pointer">
-                Mentions Légales
-              </span>
-              <span className="hover:text-amber-400 transition-colors cursor-pointer">
-                Contact
-              </span>
-            </div>
-          </div>
-        </footer>
+        {/* Footer externalisé */}
+        <Footer />
       </div>
     </>
   );
