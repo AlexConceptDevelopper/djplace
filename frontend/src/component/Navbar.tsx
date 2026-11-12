@@ -1,8 +1,42 @@
 // src/component/Navbar.tsx
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>("");
+
+  // Vérification de la connexion à chaque changement de route ou montage
+  useEffect(() => {
+    const token = localStorage.getItem("jwt_token");
+    if (token) {
+      setIsAuthenticated(true);
+      try {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join("")
+        );
+        const payload = JSON.parse(jsonPayload);
+        setUsername(payload.username || "Mon Profil");
+      } catch (e) {
+        setUsername("Mon Profil");
+      }
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, [location]); // Se met à jour quand on navigue
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwt_token");
+    setIsAuthenticated(false);
+    navigate("/login");
+  };
 
   return (
     <header className="border-b border-slate-800/60 bg-slate-950/85 backdrop-blur-md sticky top-0 z-50">
@@ -35,14 +69,32 @@ export default function Navbar() {
           </span>
         </nav>
 
-        {/* Bouton Espace Membre */}
-        <div>
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition-all shadow-lg shadow-amber-500/10 cursor-pointer active:scale-95"
-          >
-            Espace Membre
-          </button>
+        {/* Boutons dynamiques selon l'authentification */}
+        <div className="flex items-center gap-3">
+          {isAuthenticated ? (
+            <>
+              <button
+                onClick={() => navigate("/profil")}
+                className="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-2"
+              >
+                <span>🎧</span> {username}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/20 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all cursor-pointer"
+                title="Se déconnecter"
+              >
+                Déconnexion
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-amber-500/10 cursor-pointer active:scale-95"
+            >
+              Espace Membre
+            </button>
+          )}
         </div>
       </div>
     </header>

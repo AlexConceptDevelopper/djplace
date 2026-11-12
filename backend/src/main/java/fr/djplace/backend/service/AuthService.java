@@ -35,7 +35,7 @@ public class AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.MEMBRE)
+                .role(Role.USER)
                 .build();
 
         userRepository.save(user);
@@ -43,11 +43,11 @@ public class AuthService {
         return "Utilisateur enregistré avec succès !";
     }
 
-    public String authenticateUser(String username, String password) {
+    public String authenticateUser(String email, String password) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password));
+                new UsernamePasswordAuthenticationToken(email, password));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtUtils.generateJwtToken(username);
+        return jwtUtils.generateJwtToken(authentication);
     }
 }

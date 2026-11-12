@@ -23,6 +23,8 @@ export async function post<T>(endpoint: string, data: unknown): Promise<T> {
   return (await response.text()) as unknown as T;
 }
 
+
+
 export function getApiUrl(endpoint: string): string {
   return `${API_BASE_URL}${endpoint}`;
 }
