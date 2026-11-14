@@ -3,6 +3,7 @@ import Home from './page/Home';
 import RegisterPage from './page/RegisterPage';
 import LoginPage from './page/LoginPage';
 import ProfilPage from './page/ProfilPage';
+import DashboardPage from './page/DashboardPage';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
 
         {/* Espace d'administration (CMS / Articles) */}
         {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
+        <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </BrowserRouter>
   );

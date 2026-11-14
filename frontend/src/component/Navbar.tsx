@@ -30,12 +30,12 @@ export default function Navbar() {
     } else {
       setIsAuthenticated(false);
     }
-  }, [location]); // Se met à jour quand on navigue
+  }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem("jwt_token");
     setIsAuthenticated(false);
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -75,13 +75,13 @@ export default function Navbar() {
             <>
               <button
                 onClick={() => navigate("/profil")}
-                className="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                className="cursor-pointer bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all flex items-center gap-2"
               >
                 <span>🎧</span> {username}
               </button>
               <button
                 onClick={handleLogout}
-                className="bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/20 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all cursor-pointer"
+                className="cursor-pointer bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/20 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all"
                 title="Se déconnecter"
               >
                 Déconnexion
@@ -90,9 +90,9 @@ export default function Navbar() {
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-amber-500/10 cursor-pointer active:scale-95"
+              className="cursor-pointer bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-amber-500/10 active:scale-95"
             >
-              Espace Membre
+              Connexion / Inscription
             </button>
           )}
         </div>

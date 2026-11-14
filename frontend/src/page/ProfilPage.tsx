@@ -1,45 +1,18 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteMyAccount } from "../api/user";
+import { useAuth } from "../hooks/useAuth";
 import Navbar from "../component/Navbar";
+import { useState } from "react";
 
 export default function ProfilPage() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [role, setRole] = useState<string>("");
+  // On récupère l'utilisateur connecté (redirige automatiquement vers /login s'il n'y a pas de token)
+  const { user, loading } = useAuth();
 
   // États pour la modale de suppression
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  useEffect(() => {
-    const token = localStorage.getItem("jwt_token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      );
-      const payload = JSON.parse(jsonPayload);
-      
-      // Adaptation au nouveau payload JWT
-      setUsername(payload.username || "Utilisateur");
-      setEmail(payload.sub || ""); // Le sub contient l'email
-      setRole(payload.role || "ROLE_USER");
-    } catch (e) {
-      console.error("Erreur lors de la lecture du token", e);
-    }
-  }, [navigate]);
 
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
@@ -55,28 +28,32 @@ export default function ProfilPage() {
     }
   };
 
-  const isAdmin = role === "ADMIN";
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center">
+        <p className="text-amber-400 font-medium animate-pulse">Chargement du profil...</p>
+      </div>
+    );
+  }
 
-  // Formattage du rôle pour l'affichage
+  const isAdmin = user?.role === "ADMIN";
   const displayRole = isAdmin ? "Administrateur ⚡" : "Membre de la communauté 🎧";
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col relative selection:bg-amber-500 selection:text-black">
-      {/* Intégration de la vraie Navbar */}
       <Navbar />
 
-      {/* Contenu principal */}
       <main className="flex-1 max-w-4xl w-full mx-auto p-6 md:p-10 space-y-8">
         
         {/* En-tête de bienvenue */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800/80 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-linear-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800/80 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
           <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
           <div className="space-y-2 z-10">
             <span className="text-xs font-bold uppercase tracking-widest text-amber-500 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
               Espace Personnel
             </span>
             <h1 className="text-3xl font-black text-white tracking-tight">
-              Salut, {username} ! 🎧
+              Salut, {user?.username} ! 🎧
             </h1>
             <p className="text-slate-400 text-sm">
               Gère tes informations personnelles et les paramètres de ton compte.
@@ -104,11 +81,11 @@ export default function ProfilPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="bg-slate-900/60 border border-slate-800/60 p-4 rounded-2xl space-y-1">
               <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Pseudo</span>
-              <p className="text-white font-semibold text-base">{username}</p>
+              <p className="text-white font-semibold text-base">{user?.username}</p>
             </div>
             <div className="bg-slate-900/60 border border-slate-800/60 p-4 rounded-2xl space-y-1">
               <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Adresse Email</span>
-              <p className="text-white font-semibold text-base truncate" title={email}>{email || "Non renseigné"}</p>
+              <p className="text-white font-semibold text-base truncate" title={user?.email}>{user?.email || "Non renseigné"}</p>
             </div>
             <div className="bg-slate-900/60 border border-slate-800/60 p-4 rounded-2xl space-y-1">
               <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Statut / Rôle</span>
