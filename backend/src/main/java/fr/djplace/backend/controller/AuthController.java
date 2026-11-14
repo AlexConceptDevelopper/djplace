@@ -18,13 +18,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
-        String response = authService.register(request);
-        return ResponseEntity.ok(response);
+        authService.register(request);
+        return ResponseEntity.ok("{\"message\": \"Utilisateur enregistré avec succès !\"}");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         String jwt = authService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok("{\"token\": \"" + jwt + "\"}");
     }
 }

@@ -23,7 +23,7 @@ public class User {
     private Integer id;
 
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @NotBlank
