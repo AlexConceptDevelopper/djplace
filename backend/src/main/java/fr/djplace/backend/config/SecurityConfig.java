@@ -3,6 +3,8 @@ package fr.djplace.backend.config;
 import fr.djplace.backend.security.AuthTokenFilter;
 import fr.djplace.backend.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,6 +32,9 @@ public class SecurityConfig {
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
 
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter(jwtUtils, userDetailsService);
@@ -48,7 +53,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // URL de ton front Vite/React
+        configuration.setAllowedOrigins(List.of(
+            frontendUrl,
+            "https://www.djplace.fr", // Sécurité au cas où on accède avec les www
+            "http://localhost:5173"   // Pour le dev local si besoin
+        )); // URL de ton front Vite/React
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
