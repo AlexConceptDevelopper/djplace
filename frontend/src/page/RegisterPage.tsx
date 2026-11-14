@@ -1,6 +1,7 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { register } from "../api/auth";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setSuccessMessage("");
@@ -34,16 +35,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
-      });
-
-      if (!response.ok) {
-        const data = await response.text();
-        throw new Error(data || "Impossible de créer le compte.");
-      }
+      await register({ username, email, password });
 
       setSuccessMessage("Compte créé avec succès ! Redirection vers la connexion...");
       setTimeout(() => {

@@ -1,6 +1,6 @@
 // src/pages/Home.tsx
 import { Helmet } from "react-helmet-async";
-import type { ArticleResponseDto } from "../type";
+import type { ArticleResponseDto } from "../types";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 

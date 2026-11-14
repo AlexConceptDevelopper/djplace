@@ -4,7 +4,7 @@ import type {
   LoginResponse, 
   RegisterRequest, 
   RegisterResponse 
-} from "../type/auth";
+} from "../types/auth";
 
 export async function login(data: LoginRequest): Promise<LoginResponse> {
   const response = await apiFetch<LoginResponse>("/api/auth/login", {

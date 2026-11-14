@@ -1,6 +1,7 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { login } from "../api/auth";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -11,28 +12,23 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Identifiants invalides");
+      const data = await login({ email, password });
+      
+      // Adaptation selon ce que ton back renvoie (token ou jwt)
+      const token = data.token;
+      if (token) {
+        localStorage.setItem("jwt_token", token);
       }
 
-      const jwt = await response.text();
-      localStorage.setItem("jwt_token", jwt);
-
       navigate("/");
-    } catch (err) {
-      setError("Adresse e-mail ou mot de passe incorrect.");
+    } catch (err: any) {
+      setError(err.message || "Adresse e-mail ou mot de passe incorrect.");
     } finally {
       setLoading(false);
     }
