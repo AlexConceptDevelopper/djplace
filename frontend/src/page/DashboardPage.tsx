@@ -18,7 +18,7 @@ export default function DashboardPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleArticleSubmit = async (e: React.FormEvent) => {
+  const handleArticleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSuccessMessage("");
     setErrorMessage("");

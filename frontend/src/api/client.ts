@@ -1,30 +1,55 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
-export async function post<T>(endpoint: string, data: unknown): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
+export async function apiFetch<T>(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<T | null> {
+  // Gestion du token (adapte la clé si besoin, ex: "token")
+  const token = localStorage.getItem("token");
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || `Erreur HTTP (${response.status}) sur ${endpoint}`);
+  const headers = new Headers(options.headers);
+
+  if (!(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
   }
 
-  // Si le back renvoie du texte brut (comme ton message de succès)
-  const contentType = response.headers.get('content-type');
-  if (contentType && contentType.includes('application/json')) {
-    return response.json();
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
   }
-  
-  return (await response.text()) as unknown as T;
-}
 
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
 
+    if (!response.ok) {
+      let message = `Erreur HTTP ${response.status}`;
 
-export function getApiUrl(endpoint: string): string {
-  return `${API_BASE_URL}${endpoint}`;
+      try {
+        const errorData = await response.json();
+        if (errorData?.message) {
+          message = errorData.message;
+        }
+      } catch {
+        // Réponse sans JSON
+      }
+
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+      }
+
+      throw new Error(message);
+    }
+
+    if (response.status === 204) {
+      return null;
+    }
+
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
 }
