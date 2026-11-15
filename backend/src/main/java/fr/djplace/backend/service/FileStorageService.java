@@ -15,8 +15,8 @@ import java.util.UUID;
 public class FileStorageService {
 
     
-    @Value("${app.frontend.url}")
-    private String frontendUrl;
+    @Value("${app.backend.url}")
+private String backendUrl;;
 
     private static final String BASE_UPLOAD_DIR = "uploads/";
 
@@ -43,9 +43,8 @@ public class FileStorageService {
             Path filePath = Paths.get(targetDir + uniqueFileName);
             Files.write(filePath, file.getBytes());
 
-            // TODO mettre l'url en dynamique selon l'environnement (dev, prod, etc.)
            // Force l'URL vers le back-end Spring Boot
-            return "https://api.djplace.fr/uploads/" + sanitizedCategory + "/" + uniqueFileName;
+            return backendUrl + "/uploads/" + sanitizedCategory + "/" + uniqueFileName;
 
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de la sauvegarde du fichier sur le serveur.", e);
