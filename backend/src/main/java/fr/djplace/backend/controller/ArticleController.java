@@ -4,6 +4,9 @@ import fr.djplace.backend.dto.ArticleRequestDto;
 import fr.djplace.backend.dto.ArticleResponseDto;
 import fr.djplace.backend.service.ArticleService;
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +21,19 @@ public class ArticleController {
 
     public ArticleController(ArticleService articleService) {
         this.articleService = articleService;
+    }
+
+    // Récupérer tous les articles (Public)
+    @GetMapping
+    public ResponseEntity<List<ArticleResponseDto>> getAllArticles() {
+        return ResponseEntity.ok(articleService.getAllArticles());
+    }
+
+    // Récupérer un article par son slug (Public)
+    @GetMapping("/{slug}")
+    public ResponseEntity<ArticleResponseDto> getArticleBySlug(@PathVariable String slug) {
+        ArticleResponseDto article = articleService.getArticleBySlug(slug);
+        return ResponseEntity.ok(article);
     }
 
     @PostMapping

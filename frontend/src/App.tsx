@@ -4,12 +4,15 @@ import RegisterPage from './page/RegisterPage';
 import LoginPage from './page/LoginPage';
 import ProfilPage from './page/ProfilPage';
 import DashboardPage from './page/DashboardPage';
+import ArticleDetailPage from './page/ArticleDetailPage';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+
+        <Route path="/articles/:slug" element={<ArticleDetailPage />} />
         
         {/* Routes d'authentification */}
         <Route path="/login" element={<LoginPage />} />

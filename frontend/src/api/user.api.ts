@@ -1,4 +1,4 @@
-import { apiFetch } from "./client";
+import { apiFetch } from "./client.api";
 
 /**
  * Supprime le compte de l'utilisateur connecté (RGPD)

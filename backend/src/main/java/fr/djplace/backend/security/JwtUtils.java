@@ -71,4 +71,8 @@ public class JwtUtils {
         }
         return false;
     }
+
+    public byte[] getJwtSecretBytes() {
+        return jwtSecret.getBytes();
+    }
 }

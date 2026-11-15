@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../api/auth";
+import { login } from "../api/auth.api";
 
 export default function LoginPage() {
   const navigate = useNavigate();

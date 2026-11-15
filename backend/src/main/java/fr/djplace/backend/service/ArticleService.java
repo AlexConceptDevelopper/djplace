@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.Normalizer;
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -55,5 +56,18 @@ public class ArticleService {
         Article savedArticle = articleRepository.save(article);
 
         return articleMapper.toDto(savedArticle);
+    }
+
+    public List<ArticleResponseDto> getAllArticles() {
+        return articleRepository.findAll().stream()
+                .map(articleMapper::toDto)
+                .toList();
+    }
+
+    public ArticleResponseDto getArticleBySlug(String slug) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                        "Article introuvable avec le slug : " + slug));
+        return articleMapper.toDto(article);
     }
 }

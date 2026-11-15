@@ -1,11 +1,14 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://api.djplace.fr";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+
+interface CustomRequestInit extends RequestInit {
+  skipAuth?: boolean; 
+}
 
 export async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {},
+  options: CustomRequestInit = {},
 ): Promise<T | null> {
-  // Gestion du token (adapte la clé si besoin, ex: "token")
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("jwt_token");
 
   const headers = new Headers(options.headers);
 
@@ -13,7 +16,8 @@ export async function apiFetch<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  if (token) {
+  // N'envoie le token que s'il existe ET que l'option skipAuth n'est pas activée
+  if (token && !options.skipAuth) {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
@@ -35,7 +39,8 @@ export async function apiFetch<T>(
         // Réponse sans JSON
       }
 
-      if (response.status === 401) {
+      // Si le token est rejeté (401 ou 403), on le nettoie direct du localStorage
+      if (response.status === 401 || response.status === 403) {
         localStorage.removeItem("token");
       }
 

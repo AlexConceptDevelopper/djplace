@@ -10,6 +10,11 @@ export interface CategoryResponseDto {
   description?: string;
 }
 
+export interface CategoryRequestDto {
+  name: string;
+  description?: string;
+}
+
 // --- ARTICLES ---
 export interface ArticleResponseDto {
   id: number;

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { deleteMyAccount } from "../api/user";
+import { deleteMyAccount } from "../api/user.api";
 import { useAuth } from "../hooks/useAuth";
 import Navbar from "../component/Navbar";
 import { useState } from "react";
