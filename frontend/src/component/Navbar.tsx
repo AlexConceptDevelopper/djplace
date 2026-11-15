@@ -58,7 +58,7 @@ export default function Navbar() {
           <img
             src="/djplace-logo.jpg"
             alt="DJPLACE.FR"
-            className="h-12 w-auto object-contain hover:opacity-95 transition-opacity"
+            className="h-20 w-auto object-contain hover:opacity-95 transition-opacity"
           />
         </Link>
 
