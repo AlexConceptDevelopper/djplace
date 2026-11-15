@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -54,9 +55,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-            frontendUrl,
-            "https://www.djplace.fr", // Sécurité au cas où on accède avec les www
-            "http://localhost:5173"   // Pour le dev local si besoin
+                frontendUrl,
+                "https://www.djplace.fr", // Sécurité au cas où on accède avec les www
+                "http://localhost:5173" // Pour le dev local si besoin
         )); // URL de ton front Vite/React
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
@@ -68,6 +69,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/uploads/**");
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -75,13 +81,17 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/uploads/**", "/api/uploads/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/articles/**", "/api/categories/**", "/api/uploads/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/articles/**", "/api/categories/**", "/api/uploads/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/articles/**", "/api/categories/**", "/api/uploads/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/articles/**", "/api/categories/**", "/api/uploads/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/articles/**", "/api/categories/**", "/api/uploads/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/articles/**", "/api/categories/**", "/api/uploads/**")
+                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/articles/**", "/api/categories/**", "/api/uploads/**")
+                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/articles/**", "/api/categories/**", "/api/uploads/**")
+                        .hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        // Autoriser la suppression de son propre compte pour les USER et ADMIN authentifiés
+                        // Autoriser la suppression de son propre compte pour les USER et ADMIN
+                        // authentifiés
                         .requestMatchers(HttpMethod.DELETE, "/api/users/me").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated());
 
