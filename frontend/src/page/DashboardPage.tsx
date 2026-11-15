@@ -7,7 +7,6 @@ import ArticleManager from "../component/ArticleManager";
 import CategoryManager from "../component/CategoryManager";
 import { articleApi } from "../api/article.api";
 import { categoryApi } from "../api/category.api";
-import type { ArticleResponseDto, CategoryResponseDto } from "../types";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -55,7 +54,7 @@ export default function DashboardPage() {
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-8">
         
         {/* --- EN-TÊTE ADMIN --- */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800/80 rounded-3xl p-8 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+        <div className="bg-linear-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800/80 rounded-3xl p-8 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
           <div className="space-y-2 z-10">
             <span className="text-xs font-bold uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
               Panneau de Contrôle ⚡
