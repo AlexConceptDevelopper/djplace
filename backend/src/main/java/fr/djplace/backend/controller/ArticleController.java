@@ -38,8 +38,26 @@ public class ArticleController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ArticleResponseDto> createPatient(@Valid @RequestBody ArticleRequestDto dto) {
+    public ResponseEntity<ArticleResponseDto> createArticle(@Valid @RequestBody ArticleRequestDto dto) {
         ArticleResponseDto createdArticle = articleService.createArticle(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdArticle);
+    }
+
+    // Mettre à jour un article (Admin) - ID en Integer
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ArticleResponseDto> updateArticle(
+            @PathVariable Integer id,
+            @Valid @RequestBody ArticleRequestDto dto) {
+        ArticleResponseDto updatedArticle = articleService.updateArticle(id, dto);
+        return ResponseEntity.ok(updatedArticle);
+    }
+
+    // Supprimer un article (Admin) - ID en Integer
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteArticle(@PathVariable Integer id) {
+        articleService.deleteArticle(id);
+        return ResponseEntity.noContent().build();
     }
 }

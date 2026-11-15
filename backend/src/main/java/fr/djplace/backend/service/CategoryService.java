@@ -50,4 +50,33 @@ public class CategoryService {
 
         return categoryMapper.toDto(savedCategory);
     }
+
+    @Transactional
+    public CategoryResponseDto updateCategory(Integer id, CategoryRequestDto dto) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Catégorie introuvable avec l'id : " + id));
+
+        category.setName(dto.getName());
+        category.setDescription(dto.getDescription());
+
+        String baseSlug = generateSlug(dto.getName());
+        String slug = baseSlug;
+        int counter = 1;
+        
+        while (categoryRepository.findBySlug(slug).isPresent() && !category.getSlug().equals(slug)) {
+            slug = baseSlug + "-" + counter++;
+        }
+        category.setSlug(slug);
+
+        Category updatedCategory = categoryRepository.save(category);
+        return categoryMapper.toDto(updatedCategory);
+    }
+
+    @Transactional
+    public void deleteCategory(Integer id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Catégorie introuvable avec l'id : " + id));
+        
+        categoryRepository.delete(category);
+    }
 }

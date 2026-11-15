@@ -3,113 +3,47 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import Navbar from "../component/Navbar";
-import Editor from "../component/Editor";
+import ArticleManager from "../component/ArticleManager";
+import CategoryManager from "../component/CategoryManager";
 import { articleApi } from "../api/article.api";
 import { categoryApi } from "../api/category.api";
-import type { ArticleType, DifficultyLevel, CategoryResponseDto } from "../types";
+import type { ArticleResponseDto, CategoryResponseDto } from "../types";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth("ROLE_ADMIN");
+  const { user, loading: authLoading } = useAuth("ROLE_ADMIN");
 
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "articles" | "categories">("overview");
+  
+  // Stats rapides pour la vue d'ensemble
+  const [articlesCount, setArticlesCount] = useState(0);
+  const [categoriesCount, setCategoriesCount] = useState(0);
+  const [loadingStats, setLoadingStats] = useState(false);
 
-  // États pour les catégories
-  const [categories, setCategories] = useState<CategoryResponseDto[]>([]);
-  const [newCatName, setNewCatName] = useState("");
-  const [newCatDesc, setNewCatDesc] = useState("");
-  const [catMessage, setCatMessage] = useState("");
-
-  // États pour le formulaire d'article
-  const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
-  const [mainImageUrl, setMainImageUrl] = useState("");
-  const [categoryId, setCategoryId] = useState<number | "">("");
-  const [articleType, setArticleType] = useState<ArticleType>("TUTO");
-  const [articleLevel, setArticleLevel] = useState<DifficultyLevel>("DEBUTANT");
-  const [published, setPublished] = useState(false); // État pour la publication directe
-  const [editorData, setEditorData] = useState("");
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  // Charger les catégories au démarrage
   useEffect(() => {
-    categoryApi.getAll()
-      .then((data) => {
-        setCategories(data);
-        if (data.length > 0) setCategoryId(data[0].id);
-      })
-      .catch(console.error);
-  }, []);
-
-  // Création d'une catégorie à la volée
-  const handleCategorySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setCatMessage("");
-    try {
-      const created = await categoryApi.create({ name: newCatName, description: newCatDesc });
-      if (created) {
-        setCategories([...categories, created]);
-        setNewCatName("");
-        setNewCatDesc("");
-        setCatMessage("Catégorie créée avec succès ! 🎉");
-        setCategoryId(created.id); // Sélection automatique de la nouvelle catégorie
+    const fetchStats = async () => {
+      setLoadingStats(true);
+      try {
+        const [articles, categories] = await Promise.all([
+          articleApi.getAll(),
+          categoryApi.getAll(),
+        ]);
+        setArticlesCount(articles.length);
+        setCategoriesCount(categories.length);
+      } catch (err) {
+        console.error("Erreur lors du chargement des statistiques du dashboard :", err);
+      } finally {
+        setLoadingStats(false);
       }
-    } catch (err) {
-      setCatMessage("Erreur lors de la création de la catégorie.");
-    }
-  };
+    };
 
-  // Soumission de l'article
-  const handleArticleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSuccessMessage("");
-    setErrorMessage("");
+    fetchStats();
+  }, [activeTab]);
 
-    if (!editorData.trim() || editorData === "<p></p>") {
-      setErrorMessage("Le contenu de l'article ne peut pas être vide.");
-      return;
-    }
-
-    if (categoryId === "") {
-      setErrorMessage("Veuillez sélectionner ou créer une catégorie.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await articleApi.create({
-        title,
-        content: editorData,
-        summary: summary || undefined,
-        mainImageUrl: mainImageUrl || undefined,
-        type: articleType,
-        level: articleLevel,
-        categoryId: Number(categoryId),
-        published, // Envoi de l'état de publication
-      });
-
-      setSuccessMessage("Article enregistré avec succès ! 🚀");
-      setTitle("");
-      setSummary("");
-      setMainImageUrl("");
-      setPublished(false);
-      setEditorData("");
-    } catch (err: any) {
-      console.error(err);
-      setErrorMessage(err.message || "Une erreur est survenue lors de la publication.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center">
-        <p className="text-amber-400 font-medium animate-pulse">Chargement du dashboard...</p>
+        <p className="text-amber-400 font-medium animate-pulse">Vérification des accès administrateur...</p>
       </div>
     );
   }
@@ -120,198 +54,142 @@ export default function DashboardPage() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-8">
         
-        {/* En-tête Admin */}
-        <div className="bg-linear-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800/80 rounded-3xl p-8 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+        {/* --- EN-TÊTE ADMIN --- */}
+        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800/80 rounded-3xl p-8 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
           <div className="space-y-2 z-10">
             <span className="text-xs font-bold uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
               Panneau de Contrôle ⚡
             </span>
             <h1 className="text-3xl font-black text-white tracking-tight">
-              Dashboard de {user?.username}
+              Dashboard de {user?.username || "Admin"}
             </h1>
-            <p className="text-slate-400 text-sm">
-              Supervise l'activité de djplace.fr, gère les articles et modère la communauté.
+            <p className="text-slate-400 text-sm max-w-xl">
+              Supervise l'activité de djplace.fr, publie tes tutoriels, gère les catégories et pilote ton contenu en toute simplicité.
             </p>
           </div>
 
-          <button
-            onClick={() => navigate("/profil")}
-            className="cursor-pointer text-xs font-bold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700 px-4 py-3 rounded-2xl transition-all shadow-lg z-10"
-          >
-            Mon Profil 👤
-          </button>
+          <div className="flex items-center gap-3 z-10">
+            <button
+              onClick={() => navigate("/profil")}
+              className="cursor-pointer text-xs font-bold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700 px-4 py-3 rounded-2xl transition-all shadow-lg flex items-center gap-2"
+            >
+              <span>👤</span> Mon Profil
+            </button>
+          </div>
         </div>
 
-        {/* Navigation par Onglets */}
+        {/* --- NAVIGATION PAR ONGLETS --- */}
         <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-4">
           <button
             onClick={() => setActiveTab("overview")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer ${activeTab === "overview" ? "bg-amber-500 text-slate-950 shadow-lg" : "bg-slate-950 text-slate-400 border border-slate-800"}`}
+            className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center gap-2 ${
+              activeTab === "overview"
+                ? "bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
+                : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
+            }`}
           >
-            📊 Vue d'ensemble
+            <span>📊</span> Vue d'ensemble
           </button>
           <button
             onClick={() => setActiveTab("articles")}
-            className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer ${activeTab === "articles" ? "bg-amber-500 text-slate-950 shadow-lg" : "bg-slate-950 text-slate-400 border border-slate-800"}`}
+            className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center gap-2 ${
+              activeTab === "articles"
+                ? "bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
+                : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
+            }`}
           >
-            📝 Gestion des Articles
+            <span>📝</span> Gestion des Articles
+          </button>
+          <button
+            onClick={() => setActiveTab("categories")}
+            className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center gap-2 ${
+              activeTab === "categories"
+                ? "bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
+                : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
+            }`}
+          >
+            <span>📁</span> Gestion des Catégories
           </button>
         </div>
 
-        {/* --- ONGLET : ARTICLES & CATÉGORIES --- */}
-        {activeTab === "articles" && (
-          <div className="space-y-8">
-            
-            {/* Bloc de création rapide de catégorie */}
-            <div className="bg-slate-950/60 border border-slate-800/80 p-6 rounded-3xl backdrop-blur-md shadow-xl space-y-4">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <span>📁</span> Ajouter une nouvelle catégorie
-              </h3>
-              <form onSubmit={handleCategorySubmit} className="flex flex-col md:flex-row gap-4 items-end">
-                <div className="flex-1 w-full">
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Nom de la catégorie</label>
-                  <input
-                    type="text"
-                    value={newCatName}
-                    onChange={(e) => setNewCatName(e.target.value)}
-                    required
-                    placeholder="Ex: Platines & Vinyles"
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2.5 text-sm text-white outline-none focus:border-amber-500/50"
-                  />
-                </div>
-                <div className="flex-1 w-full">
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Description (Optionnelle)</label>
-                  <input
-                    type="text"
-                    value={newCatDesc}
-                    onChange={(e) => setNewCatDesc(e.target.value)}
-                    placeholder="Description..."
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2.5 text-sm text-white outline-none focus:border-amber-500/50"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs px-5 py-3 rounded-xl border border-slate-700 transition"
-                >
-                  Créer Catégorie ➕
-                </button>
-              </form>
-              {catMessage && <p className="text-xs text-amber-300">{catMessage}</p>}
-            </div>
-
-            {/* Formulaire de rédaction d'article */}
-            <div className="bg-slate-950/60 border border-slate-800/80 p-8 rounded-3xl backdrop-blur-md shadow-xl space-y-6">
-              <h2 className="text-xl font-bold text-white border-b border-slate-800/80 pb-4 flex items-center gap-2">
-                <span>📝</span> Rédiger un nouvel article ou tutoriel
-              </h2>
-
-              <form onSubmit={handleArticleSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Titre de l'article</label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                    placeholder="Ex: Bien débuter..."
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none focus:border-amber-500/50"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Résumé court</label>
-                  <textarea
-                    value={summary}
-                    onChange={(e) => setSummary(e.target.value)}
-                    rows={2}
-                    placeholder="Courte description affichée sur la carte de l'article..."
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none focus:border-amber-500/50 resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Type</label>
-                    <select 
-                      value={articleType} 
-                      onChange={(e) => setArticleType(e.target.value as ArticleType)}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none"
-                    >
-                      <option value="TUTO">Tuto</option>
-                      <option value="ACTU">Actu</option>
-                      <option value="MATERIEL">Matériel</option>
-                      <option value="WARMUP_SELECTION">Warmup Selection</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Niveau</label>
-                    <select 
-                      value={articleLevel} 
-                      onChange={(e) => setArticleLevel(e.target.value as DifficultyLevel)}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none"
-                    >
-                      <option value="DEBUTANT">Débutant</option>
-                      <option value="INTERMEDIAIRE">Intermédiaire</option>
-                      <option value="AVANCE">Avancé</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Catégorie</label>
-                    <select 
-                      value={categoryId} 
-                      onChange={(e) => setCategoryId(Number(e.target.value))}
-                      required
-                      className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none"
-                    >
-                      {categories.length === 0 ? (
-                        <option value="" disabled>Aucune catégorie disponible</option>
-                      ) : (
-                        categories.map((cat) => (
-                          <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))
-                      )}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Contenu (Éditeur riche)</label>
-                  <Editor onChange={(html) => setEditorData(html)} initialContent={editorData} />
-                </div>
-
-                {/* Case à cocher pour publier directement */}
-                <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800/80 p-4 rounded-xl">
-                  <input
-                    type="checkbox"
-                    id="published"
-                    checked={published}
-                    onChange={(e) => setPublished(e.target.checked)}
-                    className="w-5 h-5 accent-amber-500 rounded bg-slate-900 border-slate-800 cursor-pointer"
-                  />
-                  <label htmlFor="published" className="text-sm font-medium text-slate-200 cursor-pointer select-none">
-                    Publier immédiatement sur la page d'accueil (Rendre visible)
-                  </label>
-                </div>
-
-                {successMessage && <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-300 text-sm">{successMessage}</div>}
-                {errorMessage && <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm">{errorMessage}</div>}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="cursor-pointer bg-linear-to-r from-amber-500 to-orange-600 text-slate-950 font-bold text-xs px-6 py-3.5 rounded-xl shadow-lg disabled:opacity-50"
-                >
-                  {isSubmitting ? "Publication..." : "Publier l'article 🚀"}
-                </button>
-                
-              </form>
+        {/* --- CONTENU DE L'ONGLET : VUE D'ENSEMBLE --- */}
+        {activeTab === "overview" && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
+              {/* Carte Stats Articles */}
+              <div 
+                onClick={() => setActiveTab("articles")}
+                className="bg-slate-950/60 border border-slate-800/80 p-6 rounded-3xl backdrop-blur-md shadow-xl hover:border-amber-500/50 transition cursor-pointer group space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Articles & Tutoriels</span>
+                  <span className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition">
+                    📝
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black text-white">
+                    {loadingStats ? "..." : articlesCount}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">Articles enregistrés sur la plateforme</p>
+                </div>
+                <div className="text-xs font-bold text-amber-400 flex items-center gap-1 pt-2">
+                  Gérer les articles →
+                </div>
+              </div>
+
+              {/* Carte Stats Catégories */}
+              <div 
+                onClick={() => setActiveTab("categories")}
+                className="bg-slate-950/60 border border-slate-800/80 p-6 rounded-3xl backdrop-blur-md shadow-xl hover:border-amber-500/50 transition cursor-pointer group space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Catégories</span>
+                  <span className="w-10 h-10 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 group-hover:scale-110 transition">
+                    📁
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black text-white">
+                    {loadingStats ? "..." : categoriesCount}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">Catégories de classement actives</p>
+                </div>
+                <div className="text-xs font-bold text-orange-400 flex items-center gap-1 pt-2">
+                  Gérer les catégories →
+                </div>
+              </div>
+
             </div>
 
+            <div className="bg-slate-950/60 border border-slate-800/80 p-8 rounded-3xl backdrop-blur-md shadow-xl space-y-4">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>⚡</span> Actions rapides
+              </h2>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <button
+                  onClick={() => setActiveTab("articles")}
+                  className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-5 py-3 rounded-xl font-bold text-xs transition"
+                >
+                  + Rédiger un nouvel article
+                </button>
+                <button
+                  onClick={() => setActiveTab("categories")}
+                  className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-orange-400 border border-slate-700 px-5 py-3 rounded-xl font-bold text-xs transition"
+                >
+                  + Ajouter une catégorie
+                </button>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* --- CONTENU DE L'ONGLET : ARTICLES --- */}
+        {activeTab === "articles" && <ArticleManager />}
+
+        {/* --- CONTENU DE L'ONGLET : CATÉGORIES --- */}
+        {activeTab === "categories" && <CategoryManager />}
 
       </main>
     </div>

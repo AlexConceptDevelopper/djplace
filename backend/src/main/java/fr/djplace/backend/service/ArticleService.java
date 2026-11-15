@@ -70,4 +70,49 @@ public class ArticleService {
                         "Article introuvable avec le slug : " + slug));
         return articleMapper.toDto(article);
     }
+
+    @Transactional
+    public ArticleResponseDto updateArticle(Integer id, ArticleRequestDto dto) {
+        // 1. Récupérer l'article existant
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Article introuvable avec l'ID : " + id));
+
+        // 2. Récupérer la nouvelle catégorie
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Catégorie introuvable avec l'ID : " + dto.getCategoryId()));
+
+        // 3. Mettre à jour les champs de base
+        article.setTitle(dto.getTitle());
+        article.setContent(dto.getContent());
+        article.setSummary(dto.getSummary());
+        article.setType(dto.getType());
+        article.setLevel(dto.getLevel());
+        article.setPublished(dto.getPublished());
+        article.setCategory(category);
+
+        if (dto.getMainImageUrl() != null) {
+            article.setMainImageUrl(dto.getMainImageUrl());
+        }
+
+        // 4. Régénérer le slug si le titre a changé
+        String baseSlug = generateSlug(dto.getTitle());
+        String slug = baseSlug;
+        int counter = 1;
+        while (articleRepository.findBySlug(slug).isPresent() && !article.getSlug().equals(slug)) {
+            slug = baseSlug + "-" + counter++;
+        }
+        article.setSlug(slug);
+
+        // 5. Sauvegarde
+        Article updatedArticle = articleRepository.save(article);
+        return articleMapper.toDto(updatedArticle);
+    }
+
+    @Transactional
+    public void deleteArticle(Integer id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Article introuvable avec l'ID : " + id));
+        articleRepository.delete(article);
+    }
 }

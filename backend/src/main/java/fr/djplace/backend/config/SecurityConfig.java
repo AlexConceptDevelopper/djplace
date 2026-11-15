@@ -75,10 +75,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/articles/**", "/api/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/articles/**", "/api/categories/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/articles/**", "/api/categories/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/articles/**", "/api/categories/**").hasRole("ADMIN")
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/articles/**", "/api/categories/**", "/api/uploads/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/articles/**", "/api/categories/**", "/api/uploads/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/articles/**", "/api/categories/**", "/api/uploads/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/articles/**", "/api/categories/**", "/api/uploads/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Autoriser la suppression de son propre compte pour les USER et ADMIN authentifiés
                         .requestMatchers(HttpMethod.DELETE, "/api/users/me").hasAnyRole("USER", "ADMIN")

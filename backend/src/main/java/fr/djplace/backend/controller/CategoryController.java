@@ -33,4 +33,20 @@ public class CategoryController {
         CategoryResponseDto createdCategory = categoryService.createCategory(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoryResponseDto> updateCategory(
+            @PathVariable Integer id,
+            @Valid @RequestBody CategoryRequestDto dto) {
+        CategoryResponseDto updatedCategory = categoryService.updateCategory(id, dto);
+        return ResponseEntity.ok(updatedCategory);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Integer id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
 }

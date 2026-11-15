@@ -28,4 +28,6 @@ public class ArticleRequestDto {
 
     @NotNull(message = "L'ID de la catégorie est obligatoire")
     private Integer categoryId;
+
+    private Boolean published = false;
 }

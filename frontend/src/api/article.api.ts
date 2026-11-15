@@ -1,3 +1,4 @@
+// src/api/article.api.ts
 import { apiFetch } from './client.api';
 import type { ArticleType, DifficultyLevel, ArticleResponseDto } from '../types';
 
@@ -26,6 +27,19 @@ export const articleApi = {
     return await apiFetch<ArticleResponseDto>('/api/articles', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  },
+
+  update: async (id: number, data: ArticleRequestDto): Promise<ArticleResponseDto | null> => {
+    return await apiFetch<ArticleResponseDto>(`/api/articles/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  delete: async (id: number): Promise<void> => {
+    await apiFetch(`/api/articles/${id}`, {
+      method: 'DELETE',
     });
   },
 };
