@@ -45,7 +45,7 @@ public class FileStorageService {
 
             // TODO mettre l'url en dynamique selon l'environnement (dev, prod, etc.)
            // Force l'URL vers le back-end Spring Boot
-            return "http://localhost:8080/uploads/" + sanitizedCategory + "/" + uniqueFileName;
+            return "https://api.djplace.fr/uploads/" + sanitizedCategory + "/" + uniqueFileName;
 
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de la sauvegarde du fichier sur le serveur.", e);

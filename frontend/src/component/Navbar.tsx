@@ -7,8 +7,9 @@ export default function Navbar() {
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  // Vérification de la connexion à chaque changement de route ou montage
+  // Vérification de la connexion et des rôles à chaque changement de route ou montage
   useEffect(() => {
     const token = localStorage.getItem("jwt_token");
     if (token) {
@@ -24,17 +25,28 @@ export default function Navbar() {
         );
         const payload = JSON.parse(jsonPayload);
         setUsername(payload.username || "Mon Profil");
+
+        // Vérification du rôle admin (selon la structure de ton JWT, ex: payload.role ou payload.roles)
+        const role = payload.role || payload.roles;
+        const hasAdminRole = Array.isArray(role) 
+          ? role.includes("ROLE_ADMIN") 
+          : role === "ROLE_ADMIN";
+        
+        setIsAdmin(hasAdminRole);
       } catch (e) {
         setUsername("Mon Profil");
+        setIsAdmin(false);
       }
     } else {
       setIsAuthenticated(false);
+      setIsAdmin(false);
     }
   }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem("jwt_token");
     setIsAuthenticated(false);
+    setIsAdmin(false);
     navigate("/");
   };
 
@@ -69,16 +81,27 @@ export default function Navbar() {
           </span>
         </nav>
 
-        {/* Boutons dynamiques selon l'authentification */}
+        {/* Boutons dynamiques selon l'authentification et les rôles */}
         <div className="flex items-center gap-3">
           {isAuthenticated ? (
             <>
+              {/* Bouton Dashboard visible uniquement pour l'Admin */}
+              {isAdmin && (
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="cursor-pointer bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold text-xs px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 shadow-lg shadow-amber-500/5"
+                >
+                  <span>⚡</span> Dashboard
+                </button>
+              )}
+
               <button
                 onClick={() => navigate("/profil")}
                 className="cursor-pointer bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all flex items-center gap-2"
               >
                 <span>🎧</span> {username}
               </button>
+
               <button
                 onClick={handleLogout}
                 className="cursor-pointer bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/20 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all"
