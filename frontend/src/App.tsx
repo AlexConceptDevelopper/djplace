@@ -5,26 +5,29 @@ import LoginPage from './page/LoginPage';
 import ProfilPage from './page/ProfilPage';
 import DashboardPage from './page/DashboardPage';
 import ArticleDetailPage from './page/ArticleDetailPage';
+import { HelmetProvider } from 'react-helmet-async';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
+    <HelmetProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-        <Route path="/articles/:slug" element={<ArticleDetailPage />} />
-        
-        {/* Routes d'authentification */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+          <Route path="/articles/:slug" element={<ArticleDetailPage />} />
+          
+          {/* Routes d'authentification */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        {/* Espace membre & Profil */}
-        <Route path="/profil" element={<ProfilPage />} />
+          {/* Espace membre & Profil */}
+          <Route path="/profil" element={<ProfilPage />} />
 
-        {/* Espace d'administration (CMS / Articles) */}
-        {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Espace d'administration (CMS / Articles) */}
+          {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }

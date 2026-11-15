@@ -16,7 +16,7 @@ public class FileStorageService {
 
     
     @Value("${app.backend.url}")
-private String backendUrl;;
+    private String backendUrl;;
 
     private static final String BASE_UPLOAD_DIR = "uploads/";
 

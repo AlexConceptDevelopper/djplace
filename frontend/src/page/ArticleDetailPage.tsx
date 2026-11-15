@@ -18,7 +18,8 @@ export default function ArticleDetailPage() {
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
-    articleApi.getBySlug(slug)
+    articleApi
+      .getBySlug(slug)
       .then((data) => {
         if (!data) setError(true);
         else setArticle(data);
@@ -45,14 +46,29 @@ export default function ArticleDetailPage() {
           </div>
         ) : error || !article ? (
           <div className="bg-slate-950/75 border border-slate-800 rounded-3xl p-10 text-center space-y-4">
-            <h1 className="text-2xl font-bold text-white">Article introuvable</h1>
-            <p className="text-slate-400 text-sm">Cet article n'existe pas ou n'est pas encore publié.</p>
+            <h1 className="text-2xl font-bold text-white">
+              Article introuvable
+            </h1>
+            <p className="text-slate-400 text-sm">
+              Cet article n'existe pas ou n'est pas encore publié.
+            </p>
           </div>
         ) : (
           <>
             <Helmet>
-              <title>{article.title} - djplace.fr</title>
-              <meta name="description" content={article.summary || article.title} />
+              {/* Le titre de l'onglet et de la page pour Google */}
+              <title>{article.title} | DJ Place</title>
+
+              {/* La méta description (qui vient directement de ton champ summary !) */}
+              <meta name="description" content={article.summary} />
+
+              {/* Balises Open Graph pour les partages (Facebook, WhatsApp, Twitter...) */}
+              <meta property="og:title" content={article.title} />
+              <meta property="og:description" content={article.summary} />
+              {article.mainImageUrl && (
+                <meta property="og:image" content={article.mainImageUrl} />
+              )}
+              <meta property="og:type" content="article" />
             </Helmet>
 
             <article className="bg-slate-950/80 border border-slate-800/80 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md space-y-8">
@@ -66,7 +82,10 @@ export default function ArticleDetailPage() {
                     {article.categoryName}
                   </span>
                   <span className="text-slate-500 ml-auto">
-                    Publié le {article.createdAt ? new Date(article.createdAt).toLocaleDateString("fr-FR") : ""}
+                    Publié le{" "}
+                    {article.createdAt
+                      ? new Date(article.createdAt).toLocaleDateString("fr-FR")
+                      : ""}
                   </span>
                 </div>
 
