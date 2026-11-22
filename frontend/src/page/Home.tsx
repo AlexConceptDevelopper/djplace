@@ -12,7 +12,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    articleApi.getAll()
+    articleApi
+      .getAll()
       .then((data) => setArticles(data))
       .catch((err) => console.error("Erreur chargement articles:", err))
       .finally(() => setLoading(false));
@@ -26,10 +27,10 @@ export default function Home() {
           name="description"
           content="La plateforme historique de référence pour apprendre le mix, structurer ses sets et maîtriser son matériel DJ."
         />
+        <link rel="canonical" href="https://www.djplace.fr/" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-800 bg-[url('/images/abstract-nightlife-background.jpg')] bg-cover bg-center bg-fixed bg-no-repeat bg-blend-overlay text-slate-100 flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950 relative">
-        
         <Navbar />
 
         <main className="grow relative z-10">
@@ -57,7 +58,6 @@ export default function Home() {
           {/* Grille principale : Articles & Sidebar */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              
               {/* Colonne centrale : Articles dynamiques */}
               <div className="lg:col-span-3 space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-6">
@@ -68,9 +68,13 @@ export default function Home() {
                 </div>
 
                 {loading ? (
-                  <p className="text-slate-400 text-center py-10">Chargement des articles...</p>
+                  <p className="text-slate-400 text-center py-10">
+                    Chargement des articles...
+                  </p>
                 ) : articles.length === 0 ? (
-                  <p className="text-slate-400 text-center py-10">Aucun article publié pour le moment.</p>
+                  <p className="text-slate-400 text-center py-10">
+                    Aucun article publié pour le moment.
+                  </p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {articles.map((article) => (
@@ -88,15 +92,18 @@ export default function Home() {
                   </h3>
                   <ul className="space-y-3 text-xs font-medium text-slate-400">
                     <li className="hover:text-amber-400 transition-colors cursor-pointer flex items-center justify-between group">
-                      <span className="group-hover:translate-x-1 transition-transform">🎛️ Matériel & Régies</span>
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        🎛️ Matériel & Régies
+                      </span>
                     </li>
                     <li className="hover:text-amber-400 transition-colors cursor-pointer flex items-center justify-between group">
-                      <span className="group-hover:translate-x-1 transition-transform">🎧 Cours de Mix & Scratch</span>
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        🎧 Cours de Mix & Scratch
+                      </span>
                     </li>
                   </ul>
                 </div>
               </aside>
-
             </div>
           </div>
         </main>

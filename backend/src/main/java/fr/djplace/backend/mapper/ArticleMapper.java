@@ -46,7 +46,7 @@ public class ArticleMapper {
         article.setMainImageUrl(dto.getMainImageUrl());
         article.setType(dto.getType());
         article.setLevel(dto.getLevel());
-        article.setPublished(false); // Sécurité : non publié par défaut
+        article.setPublished(Boolean.TRUE.equals(dto.getPublished()));
         article.setCategory(category);
 
         return article;

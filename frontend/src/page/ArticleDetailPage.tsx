@@ -56,19 +56,53 @@ export default function ArticleDetailPage() {
         ) : (
           <>
             <Helmet>
-              {/* Le titre de l'onglet et de la page pour Google */}
               <title>{article.title} | DJ Place</title>
 
-              {/* La méta description (qui vient directement de ton champ summary !) */}
-              <meta name="description" content={article.summary} />
+              <meta
+                name="description"
+                content={
+                  article.summary ||
+                  "Guide et tutoriel DJ sur djplace.fr pour progresser au mix et maîtriser son matériel."
+                }
+              />
 
-              {/* Balises Open Graph pour les partages (Facebook, WhatsApp, Twitter...) */}
+              {/* Adresse officielle propre à cet article */}
+              <link
+                rel="canonical"
+                href={`https://www.djplace.fr/articles/${article.slug}`}
+              />
+
+              {/* Open Graph (Facebook, WhatsApp, LinkedIn...) */}
+              <meta property="og:type" content="article" />
+              <meta
+                property="og:url"
+                content={`https://www.djplace.fr/articles/${article.slug}`}
+              />
               <meta property="og:title" content={article.title} />
-              <meta property="og:description" content={article.summary} />
+              <meta
+                property="og:description"
+                content={
+                  article.summary ||
+                  "Guide et tutoriel DJ sur djplace.fr pour progresser au mix et maîtriser son matériel."
+                }
+              />
               {article.mainImageUrl && (
                 <meta property="og:image" content={article.mainImageUrl} />
               )}
-              <meta property="og:type" content="article" />
+
+              {/* Twitter / X */}
+              <meta name="twitter:card" content="summary_large_image" />
+              <meta name="twitter:title" content={article.title} />
+              <meta
+                name="twitter:description"
+                content={
+                  article.summary ||
+                  "Guide et tutoriel DJ sur djplace.fr pour progresser au mix et maîtriser son matériel."
+                }
+              />
+              {article.mainImageUrl && (
+                <meta name="twitter:image" content={article.mainImageUrl} />
+              )}
             </Helmet>
 
             <article className="bg-slate-950/80 border border-slate-800/80 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md space-y-8">
