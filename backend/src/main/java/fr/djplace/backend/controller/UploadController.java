@@ -1,7 +1,6 @@
 package fr.djplace.backend.controller;
 
-import fr.djplace.backend.service.FileStorageService;
-
+import fr.djplace.backend.service.CloudinaryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +13,10 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class UploadController {
 
+    private final CloudinaryService cloudinaryService;
 
-    private final FileStorageService fileStorageService;
-
-    public UploadController(FileStorageService fileStorageService) {
-        this.fileStorageService = fileStorageService;
+    public UploadController(CloudinaryService cloudinaryService) {
+        this.cloudinaryService = cloudinaryService;
     }
 
     @PostMapping
@@ -27,7 +25,7 @@ public class UploadController {
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "category", defaultValue = "general") String category) {
         try {
-            String fileUrl = fileStorageService.storeFile(file, category);
+            String fileUrl = cloudinaryService.uploadImage(file, category);
             return ResponseEntity.ok(Map.of("url", fileUrl));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
