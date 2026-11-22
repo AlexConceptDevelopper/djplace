@@ -6,6 +6,7 @@ import ProfilPage from './page/ProfilPage';
 import DashboardPage from './page/DashboardPage';
 import ArticleDetailPage from './page/ArticleDetailPage';
 import { HelmetProvider } from 'react-helmet-async';
+import ArticlesByTypePage from './page/ArticlesByTypePage';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
 
           <Route path="/articles/:slug" element={<ArticleDetailPage />} />
+          <Route path="/articles/type/:type" element={<ArticlesByTypePage />} />
           
           {/* Routes d'authentification */}
           <Route path="/login" element={<LoginPage />} />
@@ -24,7 +26,6 @@ export default function App() {
           <Route path="/profil" element={<ProfilPage />} />
 
           {/* Espace d'administration (CMS / Articles) */}
-          {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
           <Route path="/dashboard" element={<DashboardPage />} />
         </Routes>
       </BrowserRouter>

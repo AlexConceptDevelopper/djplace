@@ -1,5 +1,6 @@
 // src/pages/Home.tsx
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import type { ArticleResponseDto } from "../types";
 import { articleApi } from "../api/article.api";
@@ -7,9 +8,17 @@ import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import ArticleCard from "../component/ArticleCard";
 
+const LEVEL_FILTERS = [
+  { value: "ALL", label: "Tous" },
+  { value: "DEBUTANT", label: "Débutant" },
+  { value: "INTERMEDIAIRE", label: "Intermédiaire" },
+  { value: "AVANCE", label: "Avancé" },
+] as const;
+
 export default function Home() {
   const [articles, setArticles] = useState<ArticleResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedLevel, setSelectedLevel] = useState<string>("ALL");
 
   useEffect(() => {
     articleApi
@@ -18,6 +27,11 @@ export default function Home() {
       .catch((err) => console.error("Erreur chargement articles:", err))
       .finally(() => setLoading(false));
   }, []);
+
+  const filteredArticles =
+    selectedLevel === "ALL"
+      ? articles
+      : articles.filter((article) => article.level === selectedLevel);
 
   return (
     <>
@@ -34,20 +48,20 @@ export default function Home() {
         <Navbar />
 
         <main className="grow relative z-10">
-          {/* Hero Section */}
-          <section className="py-16 lg:py-24 border-b border-slate-800/50 bg-slate-950/40 backdrop-blur-xs">
+          {/* Hero Section resserré */}
+          <section className="py-9 lg:py-12 border-b border-slate-800/50 bg-slate-950/40 backdrop-blur-xs">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <div className="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-widest mb-6 shadow-inner">
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <div className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-semibold uppercase tracking-widest mb-3 shadow-inner">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                 Cours de DJ en ligne & Gratuit
               </div>
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight drop-shadow-md">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3 leading-tight drop-shadow-md">
                 Le rendez-vous des DJs pour{" "}
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-500">
                   perfectionner leur mix
                 </span>
               </h1>
-              <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-normal mb-10 leading-relaxed drop-shadow-sm">
+              <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-sm">
                 Retrouve l'esprit de la plateforme historique : des guides
                 pratiques, des analyses de régies platines et des techniques
                 pour enchaîner comme un pro.
@@ -56,28 +70,74 @@ export default function Home() {
           </section>
 
           {/* Grille principale : Articles & Sidebar */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Colonne centrale : Articles dynamiques */}
               <div className="lg:col-span-3 space-y-6">
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
                   <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-3">
                     <span className="w-1.5 h-6 bg-amber-500 rounded-full" />
                     Dernières publications & Dossiers
                   </h2>
                 </div>
 
+                {/* Widget de sélection du niveau */}
+                <div className="bg-slate-950/75 border border-slate-800/80 rounded-2xl p-3.5 backdrop-blur-md flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-400 mr-1">
+                      Filtrer par niveau :
+                    </span>
+                    {LEVEL_FILTERS.map((levelItem) => {
+                      const isActive = selectedLevel === levelItem.value;
+                      return (
+                        <button
+                          key={levelItem.value}
+                          type="button"
+                          onClick={() => setSelectedLevel(levelItem.value)}
+                          className={`cursor-pointer text-xs font-bold px-3.5 py-1.5 rounded-xl border transition-all ${
+                            isActive
+                              ? "bg-amber-500 text-slate-950 border-amber-400 shadow-sm shadow-amber-500/20"
+                              : "bg-slate-900/80 text-slate-300 border-slate-800 hover:border-amber-500/40 hover:text-amber-400"
+                          }`}
+                        >
+                          {levelItem.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {!loading && (
+                    <span className="text-xs text-slate-400">
+                      {filteredArticles.length}{" "}
+                      {filteredArticles.length > 1 ? "articles" : "article"}
+                    </span>
+                  )}
+                </div>
+
                 {loading ? (
                   <p className="text-slate-400 text-center py-10">
                     Chargement des articles...
                   </p>
-                ) : articles.length === 0 ? (
-                  <p className="text-slate-400 text-center py-10">
-                    Aucun article publié pour le moment.
-                  </p>
+                ) : filteredArticles.length === 0 ? (
+                  <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-8 text-center space-y-3">
+                    <p className="text-slate-400 text-sm">
+                      {selectedLevel === "ALL"
+                        ? "Aucun article publié pour le moment."
+                        : "Aucun article publié pour ce niveau pour le moment."}
+                    </p>
+                    {selectedLevel !== "ALL" && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedLevel("ALL")}
+                        className="cursor-pointer text-xs font-bold text-amber-400 hover:underline"
+                      >
+                        Afficher tous les niveaux
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {articles.map((article) => (
+                    {filteredArticles.map((article) => (
                       <ArticleCard key={article.id} article={article} />
                     ))}
                   </div>
@@ -91,15 +151,35 @@ export default function Home() {
                     Rubriques
                   </h3>
                   <ul className="space-y-3 text-xs font-medium text-slate-400">
-                    <li className="hover:text-amber-400 transition-colors cursor-pointer flex items-center justify-between group">
-                      <span className="group-hover:translate-x-1 transition-transform">
-                        🎛️ Matériel & Régies
-                      </span>
+                    <li>
+                      <Link
+                        to="/articles/type/MATERIEL"
+                        className="hover:text-amber-400 transition-colors flex items-center justify-between group"
+                      >
+                        <span className="group-hover:translate-x-1 transition-transform">
+                          🎛️ Matériel & Régies
+                        </span>
+                      </Link>
                     </li>
-                    <li className="hover:text-amber-400 transition-colors cursor-pointer flex items-center justify-between group">
-                      <span className="group-hover:translate-x-1 transition-transform">
-                        🎧 Cours de Mix & Scratch
-                      </span>
+                    <li>
+                      <Link
+                        to="/articles/type/TUTO"
+                        className="hover:text-amber-400 transition-colors flex items-center justify-between group"
+                      >
+                        <span className="group-hover:translate-x-1 transition-transform">
+                          🎧 Cours de Mix & Tutoriels
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/articles/type/WARMUP_SELECTION"
+                        className="hover:text-amber-400 transition-colors flex items-center justify-between group"
+                      >
+                        <span className="group-hover:translate-x-1 transition-transform">
+                          🔥 Warm-up Selection
+                        </span>
+                      </Link>
                     </li>
                   </ul>
                 </div>

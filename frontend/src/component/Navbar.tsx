@@ -63,22 +63,47 @@ export default function Navbar() {
         </Link>
 
         {/* Navigation principale */}
+        {/* Navigation principale */}
         <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
-          <span className="hover:text-amber-400 transition-colors cursor-pointer">
+          <Link
+            to="/articles/type/TUTO"
+            className={`transition-colors ${
+              location.pathname === "/articles/type/TUTO"
+                ? "text-amber-400 font-semibold"
+                : "hover:text-amber-400"
+            }`}
+          >
             Tutoriels
-          </span>
-          <span className="hover:text-amber-400 transition-colors cursor-pointer">
+          </Link>
+          <Link
+            to="/articles/type/MATERIEL"
+            className={`transition-colors ${
+              location.pathname === "/articles/type/MATERIEL"
+                ? "text-amber-400 font-semibold"
+                : "hover:text-amber-400"
+            }`}
+          >
             Matériel
-          </span>
-          <span className="hover:text-amber-400 transition-colors cursor-pointer">
+          </Link>
+          <Link
+            to="/articles/type/WARMUP_SELECTION"
+            className={`transition-colors ${
+              location.pathname === "/articles/type/WARMUP_SELECTION"
+                ? "text-amber-400 font-semibold"
+                : "hover:text-amber-400"
+            }`}
+          >
             Warm-up
-          </span>
-          <span className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1.5">
+          </Link>
+          <Link
+            to="/articles/type/TUTO"
+            className="hover:text-amber-400 transition-colors flex items-center gap-1.5"
+          >
             Cours
             <span className="text-[10px] bg-amber-500/10 border border-amber-500/30 text-amber-400 px-1.5 py-0.5 rounded-full font-semibold">
               Accès libre & Membres
             </span>
-          </span>
+          </Link>
         </nav>
 
         {/* Boutons dynamiques selon l'authentification et les rôles */}
