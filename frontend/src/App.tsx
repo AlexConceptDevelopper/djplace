@@ -7,11 +7,13 @@ import DashboardPage from './page/DashboardPage';
 import ArticleDetailPage from './page/ArticleDetailPage';
 import { HelmetProvider } from 'react-helmet-async';
 import ArticlesByTypePage from './page/ArticlesByTypePage';
+import AnalyticsTracker from './component/AnalyticsTracker';
 
 export default function App() {
   return (
     <HelmetProvider>
       <BrowserRouter>
+        <AnalyticsTracker />
         <Routes>
           <Route path="/" element={<Home />} />
 

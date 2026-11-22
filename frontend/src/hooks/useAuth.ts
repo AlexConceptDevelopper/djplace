@@ -8,13 +8,17 @@ interface UserPayload {
   role: string;
 }
 
+const normalizeRole = (role: string) => role.replace(/^ROLE_/, "").toUpperCase();
+
 export function useAuth(requiredRole?: string) {
   const navigate = useNavigate();
   const [user, setUser] = useState<UserPayload | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    let isMounted = true;
     const token = localStorage.getItem("jwt_token");
+
     if (!token) {
       navigate("/login");
       return;
@@ -31,26 +35,33 @@ export function useAuth(requiredRole?: string) {
       );
       const payload = JSON.parse(jsonPayload);
 
-      const userData = {
+      const userData: UserPayload = {
         username: payload.username || "Utilisateur",
         email: payload.sub || "",
-        role: payload.role || "ROLE_USER", // Ex: "ROLE_ADMIN" ou "ROLE_USER"
+        role: payload.role || "ROLE_USER",
       };
 
-      // Si un rôle spécifique est requis (ex: "ROLE_ADMIN"), on vérifie
-      if (requiredRole && userData.role !== requiredRole) {
+      if (
+        requiredRole &&
+        normalizeRole(userData.role) !== normalizeRole(requiredRole)
+      ) {
         navigate("/");
         return;
       }
 
-      setUser(userData);
+      if (isMounted) {
+        setUser(userData);
+        setLoading(false);
+      }
     } catch (e) {
       console.error("Erreur de décodage du token", e);
       localStorage.removeItem("jwt_token");
       navigate("/login");
-    } finally {
-      setLoading(false);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [navigate, requiredRole]);
 
   return { user, loading, isAuthenticated: !!user };

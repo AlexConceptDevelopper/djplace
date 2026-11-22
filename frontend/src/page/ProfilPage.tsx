@@ -36,7 +36,7 @@ export default function ProfilPage() {
     );
   }
 
-  const isAdmin = user?.role === "ADMIN";
+  const isAdmin = user?.role === "ADMIN" || user?.role === "ROLE_ADMIN";
   const displayRole = isAdmin ? "Administrateur ⚡" : "Membre de la communauté 🎧";
 
   return (

@@ -49,22 +49,26 @@ export default function Home() {
 
         <main className="grow relative z-10">
           {/* Hero Section resserré */}
-          <section className="py-9 lg:py-12 border-b border-slate-800/50 bg-slate-950/40 backdrop-blur-xs">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <div className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-semibold uppercase tracking-widest mb-3 shadow-inner">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                Cours de DJ en ligne & Gratuit
+          <section className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 text-center">
+            <div className="max-w-3xl mx-auto space-y-6">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold tracking-wider uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                Cours de DJ en ligne · Accès libre &amp; Membres
               </div>
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3 leading-tight drop-shadow-md">
+
+              {/* Titre principal */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
                 Le rendez-vous des DJs pour{" "}
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-500">
                   perfectionner leur mix
                 </span>
               </h1>
-              <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-sm">
-                Retrouve l'esprit de la plateforme historique : des guides
-                pratiques, des analyses de régies platines et des techniques
-                pour enchaîner comme un pro.
+
+              {/* Description alignée SEO & contenu */}
+              <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                Cours de DJ en ligne, actus et conseils pour apprendre à mixer
+                et maîtriser son matériel DJ.
               </p>
             </div>
           </section>
