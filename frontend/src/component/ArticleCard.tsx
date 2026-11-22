@@ -19,8 +19,25 @@ export default function ArticleCard({ article }: ArticleCardProps) {
         return "bg-blue-950/80 text-blue-400 border border-blue-800/40";
       case "AVANCE":
         return "bg-purple-950/80 text-purple-400 border border-purple-800/40";
+      case "TOUS_NIVEAUX":
+        return "bg-amber-950/80 text-amber-400 border border-amber-800/40";
       default:
         return "bg-slate-800 text-slate-300";
+    }
+  };
+
+  const getLevelLabel = (level: string) => {
+    switch (level) {
+      case "DEBUTANT":
+        return "Débutant";
+      case "INTERMEDIAIRE":
+        return "Intermédiaire";
+      case "AVANCE":
+        return "Avancé";
+      case "TOUS_NIVEAUX":
+        return "Tous niveaux";
+      default:
+        return level;
     }
   };
 
@@ -48,7 +65,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             <span
               className={`text-xs font-medium px-2.5 py-1 rounded-md ${getLevelBadgeClass(article.level)}`}
             >
-              {article.level}
+              {getLevelLabel(article.level)}
             </span>
           </div>
 
