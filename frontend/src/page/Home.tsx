@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>djplace.fr - Cours de DJ en ligne, Tutoriels et Matériel</title>
+        <title>DjPlace - Cours de DJ en ligne, Tutoriels et Matériel</title>
         <meta
           name="description"
           content="La plateforme historique de référence pour apprendre le mix, structurer ses sets et maîtriser son matériel DJ."
