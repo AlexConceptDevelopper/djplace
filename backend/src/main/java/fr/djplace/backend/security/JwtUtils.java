@@ -44,6 +44,7 @@ public class JwtUtils {
 
         return Jwts.builder()
                 .setSubject(user.getEmail()) // L'email en sujet principal (sub)
+                .claim("id", user.getId())
                 .claim("role", role)
                 .claim("username", user.getUsername()) // On glisse le pseudo dans les claims pour l'afficher sur le
                                                        // profil !

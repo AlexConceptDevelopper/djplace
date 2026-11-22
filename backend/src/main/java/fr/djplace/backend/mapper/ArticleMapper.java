@@ -4,10 +4,17 @@ import fr.djplace.backend.dto.ArticleRequestDto;
 import fr.djplace.backend.dto.ArticleResponseDto;
 import fr.djplace.backend.model.Article;
 import fr.djplace.backend.model.Category;
+import fr.djplace.backend.repository.CommentRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ArticleMapper {
+
+    private final CommentRepository commentRepository;
+
+    public ArticleMapper(CommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
+    }
 
     public ArticleResponseDto toDto(Article article) {
         if (article == null) {
@@ -25,6 +32,11 @@ public class ArticleMapper {
         dto.setLevel(article.getLevel());
         dto.setPublished(article.getPublished());
         dto.setCreatedAt(article.getCreatedAt());
+
+        Integer count = article.getId() != null
+                ? commentRepository.countByArticleId(article.getId())
+                : 0;
+        dto.setCommentCount(count != null ? count : 0);
 
         if (article.getCategory() != null) {
             dto.setCategoryName(article.getCategory().getName());

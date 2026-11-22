@@ -20,4 +20,5 @@ public class ArticleResponseDto {
     private Boolean published;
     private LocalDateTime createdAt;
     private String categoryName;
+    private Integer commentCount;
 }

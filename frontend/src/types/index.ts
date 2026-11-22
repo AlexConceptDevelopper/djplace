@@ -28,4 +28,5 @@ export interface ArticleResponseDto {
   published: boolean;
   createdAt: string;
   categoryName: string;
+  commentCount?: number;
 }

@@ -6,10 +6,14 @@ import { articleApi } from "../api/article.api";
 import type { ArticleResponseDto } from "../types";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import { getCurrentUser } from "../utils/jwt";
+import CommentSection from "../component/CommentSection";
 
 export default function ArticleDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+
+  const currentUser = getCurrentUser()
 
   const [article, setArticle] = useState<ArticleResponseDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -150,7 +154,8 @@ export default function ArticleDetailPage() {
                 className="space-y-4 text-slate-300 leading-relaxed text-base [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-white [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-white [&_h2]:mt-6 [&_strong]:text-white [&_strong]:font-bold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:border-l-4 [&_blockquote]:border-amber-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-slate-400 [&_a]:text-amber-400 [&_a]:underline"
                 dangerouslySetInnerHTML={{ __html: article.content }}
               />
-            </article>
+                </article>
+                <CommentSection articleId={article.id} currentUser={currentUser} />
           </>
         )}
       </main>

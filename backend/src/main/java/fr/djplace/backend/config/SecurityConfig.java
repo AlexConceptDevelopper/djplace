@@ -69,11 +69,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/uploads/**");
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -84,6 +79,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/sitemap.xml").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/articles/**", "/api/categories/**", "/api/uploads/**")
                         .permitAll()
+
+                        // Commentaires : lecture publique, écriture et suppression pour USER et ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/articles/*/comments").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/articles/*/comments").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/comments/*").hasAnyRole("USER", "ADMIN")
+
                         .requestMatchers(HttpMethod.POST, "/api/articles/**", "/api/categories/**", "/api/uploads/**")
                         .hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/articles/**", "/api/categories/**", "/api/uploads/**")
