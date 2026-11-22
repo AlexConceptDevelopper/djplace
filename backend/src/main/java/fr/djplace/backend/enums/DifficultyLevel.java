@@ -3,5 +3,6 @@ package fr.djplace.backend.enums;
 public enum DifficultyLevel {
     DEBUTANT,
     INTERMEDIAIRE,
-    AVANCE
+    AVANCE,
+    TOUS_NIVEAUX
 }
