@@ -280,6 +280,7 @@ export default function ArticleManager() {
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">Niveau</label>
                 <select value={articleLevel} onChange={(e) => setArticleLevel(e.target.value as DifficultyLevel)} className="w-full rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none">
+                  <option value="TOUS_NIVEAUX">Tous niveaux</option>
                   <option value="DEBUTANT">Débutant</option>
                   <option value="INTERMEDIAIRE">Intermédiaire</option>
                   <option value="AVANCE">Avancé</option>

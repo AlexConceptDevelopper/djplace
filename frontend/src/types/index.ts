@@ -1,6 +1,6 @@
 // Reprise stricte de tes Enums Java
 export type ArticleType = 'TUTO' | 'MATERIEL' | 'ACTU' | 'WARMUP_SELECTION';
-export type DifficultyLevel = 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' | 'TOUS NIVEAUX';
+export type DifficultyLevel = 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' | 'TOUS_NIVEAUX';
 
 // --- CATÉGORIES ---
 export interface CategoryResponseDto {
