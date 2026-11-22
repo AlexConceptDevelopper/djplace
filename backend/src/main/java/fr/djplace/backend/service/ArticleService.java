@@ -29,11 +29,15 @@ public class ArticleService {
         this.articleMapper = articleMapper;
     }
 
-    // Générateur de slug propre (ex: "Mon Super Article !" -> "mon-super-article")
+    // Générateur de slug propre (ex: "Mon Super Article : Guide !" ->
+    // "mon-super-article-guide")
     private String generateSlug(String input) {
         String nowhitespace = input.toLowerCase(Locale.FRENCH).trim().replaceAll("\\s+", "-");
         String normalized = Normalizer.normalize(nowhitespace, Normalizer.Form.NFD);
-        return normalized.replaceAll("[^a-z0-9-]", "");
+        return normalized
+                .replaceAll("[^a-z0-9-]", "")
+                .replaceAll("-+", "-")
+                .replaceAll("^-|-$", "");
     }
 
     @Transactional
