@@ -2,6 +2,22 @@
 export type ArticleType = 'TUTO' | 'MATERIEL' | 'ACTU' | 'WARMUP_SELECTION';
 export type DifficultyLevel = 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' | 'TOUS_NIVEAUX';
 
+
+export const getDifficultyLevelLabel = (level: string) => {
+  switch (level) {
+    case "DEBUTANT":
+      return "Débutant";
+     case "INTERMEDIAIRE":
+       return "Intermédiaire";
+     case "AVANCE":
+      return "Avancé";
+    case "TOUS_NIVEAUX":
+      return "Tous niveaux";
+    default:
+      return level;
+   }
+};
+
 // --- CATÉGORIES ---
 export interface CategoryResponseDto {
   id: number;

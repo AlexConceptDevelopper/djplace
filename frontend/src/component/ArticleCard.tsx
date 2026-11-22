@@ -1,6 +1,7 @@
 // src/component/ArticleCard.tsx
 import { Link, useNavigate } from "react-router-dom";
 import type { ArticleResponseDto } from "../types";
+import { getDifficultyLevelLabel } from "../types";
 
 interface ArticleCardProps {
   article: ArticleResponseDto;
@@ -26,20 +27,6 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     }
   };
 
-  const getLevelLabel = (level: string) => {
-    switch (level) {
-      case "DEBUTANT":
-        return "Débutant";
-      case "INTERMEDIAIRE":
-        return "Intermédiaire";
-      case "AVANCE":
-        return "Avancé";
-      case "TOUS_NIVEAUX":
-        return "Tous niveaux";
-      default:
-        return level;
-    }
-  };
 
   return (
     <article
@@ -65,7 +52,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             <span
               className={`text-xs font-medium px-2.5 py-1 rounded-md ${getLevelBadgeClass(article.level)}`}
             >
-              {getLevelLabel(article.level)}
+              {getDifficultyLevelLabel(article.level)}
             </span>
           </div>
 

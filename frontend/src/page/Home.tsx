@@ -13,6 +13,7 @@ const LEVEL_FILTERS = [
   { value: "DEBUTANT", label: "Débutant" },
   { value: "INTERMEDIAIRE", label: "Intermédiaire" },
   { value: "AVANCE", label: "Avancé" },
+  { value: "TOUS_NIVEAUX", label: "Tous niveaux" },
 ] as const;
 
 export default function Home() {
