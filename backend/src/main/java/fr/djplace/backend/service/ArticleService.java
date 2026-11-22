@@ -40,6 +40,20 @@ public class ArticleService {
                 .replaceAll("^-|-$", "");
     }
 
+    // Pour le site public (accueil, listes) : uniquement les publiés
+    public List<ArticleResponseDto> getPublishedArticles() {
+        return articleRepository.findByPublishedTrueOrderByCreatedAtDesc().stream()
+                .map(articleMapper::toDto)
+                .toList();
+    }
+
+    // Pour l'admin : tous les articles (brouillons inclus)
+    public List<ArticleResponseDto> getAllArticlesForAdmin() {
+        return articleRepository.findAll().stream()
+                .map(articleMapper::toDto)
+                .toList();
+    }
+
     @Transactional
     public ArticleResponseDto createArticle(ArticleRequestDto dto) {
         // 1. Récupérer la catégorie

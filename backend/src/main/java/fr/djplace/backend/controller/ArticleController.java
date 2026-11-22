@@ -23,10 +23,17 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
-    // Récupérer tous les articles (Public)
+    // Récupérer uniquement les articles publiés (Public)
     @GetMapping
-    public ResponseEntity<List<ArticleResponseDto>> getAllArticles() {
-        return ResponseEntity.ok(articleService.getAllArticles());
+    public ResponseEntity<List<ArticleResponseDto>> getPublishedArticles() {
+        return ResponseEntity.ok(articleService.getPublishedArticles());
+    }
+
+    // Récupérer tous les articles, brouillons compris (Admin)
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<ArticleResponseDto>> getAllArticlesAdmin() {
+        return ResponseEntity.ok(articleService.getAllArticlesForAdmin());
     }
 
     // Récupérer un article par son slug (Public)

@@ -35,7 +35,7 @@ export default function ArticleManager() {
     setLoading(true);
     try {
       const [arts, cats] = await Promise.all([
-        articleApi.getAll(),
+        articleApi.getAllAdmin(),
         categoryApi.getAll(),
       ]);
       setArticles(arts);

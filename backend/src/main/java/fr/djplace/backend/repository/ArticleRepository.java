@@ -11,5 +11,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     Optional<Article> findBySlug(String slug);
     List<Article> findByPublishedTrue();
     List<Article> findByLevelAndPublishedTrue(DifficultyLevel level);
+
     List<Article> findByTypeAndPublishedTrue(ArticleType type);
+    List<Article> findByPublishedTrueOrderByCreatedAtDesc();
 }

@@ -14,8 +14,14 @@ export interface ArticleRequestDto {
 }
 
 export const articleApi = {
+  
   getAll: async (): Promise<ArticleResponseDto[]> => {
     const res = await apiFetch<ArticleResponseDto[]>('/api/articles', { skipAuth: true });
+    return res || [];
+  },
+
+  getAllAdmin: async (): Promise<ArticleResponseDto[]> => {
+    const res = await apiFetch<ArticleResponseDto[]>('/api/articles/admin');
     return res || [];
   },
 
