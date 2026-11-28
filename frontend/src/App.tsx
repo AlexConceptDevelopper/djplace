@@ -8,6 +8,7 @@ import ArticleDetailPage from './page/ArticleDetailPage';
 import { HelmetProvider } from 'react-helmet-async';
 import ArticlesByTypePage from './page/ArticlesByTypePage';
 import AnalyticsTracker from './component/AnalyticsTracker';
+import MentionsLegalesPage from './page/legals/MentionsLegalesPage';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
 
           <Route path="/articles/:slug" element={<ArticleDetailPage />} />
           <Route path="/articles/type/:type" element={<ArticlesByTypePage />} />
+          <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
           
           {/* Routes d'authentification */}
           <Route path="/login" element={<LoginPage />} />
